@@ -1,7 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import AppError from './utils/AppError.js';
+import globalErrorHandler from './controllers/errorController.js';
+
 dotenv.config();
+
+connectDB();
 
 
 const app = express();
@@ -14,7 +20,13 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
 
+// Handle unhandled routes
+app.use((req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
 
+// Global Error Handler
+app.use(globalErrorHandler);
 
 // Start the server
 const PORT = process.env.PORT || 3000;

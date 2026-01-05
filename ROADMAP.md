@@ -1,0 +1,66 @@
+# TalentLayer Roadmap
+
+This document outlines the development roadmap for **TalentLayer**, a headless portfolio platform allowing users to store and serve their portfolio data via API.
+
+## 🚀 Phase 1: Foundation & Setup (Current)
+**Goal**: Establish the technical infrastructure for Backend and Frontend.
+
+- [x] **Repo Setup**: Initialize Git, Monorepo structure (Backend/Frontend).
+- [x] **Frontend Init**: React 19, Vite, TailwindCSS 4, GSAP/Three.js setup.
+- [x] **Backend Init**: Express 5, TypeScript setup.
+- [x] **Database Setup**:
+    - [x] Database: **MongoDB** (Selected).
+    - [x] Setup Connection: **Mongoose**.
+- [ ] **Project Structure**:
+    - [ ] **Folders**: `controllers`, `models`, `routes`, `middlewares`, `utils`, `types`.
+    - [ ] **MVC Pattern**: Setup Separation of Concerns.
+- [ ] **API Structure**:
+    - [ ] **Response Format**: JSend Standard `{ status: 'success' | 'fail' | 'error', data: ... }`.
+    - [ ] **Error Handling**: Global Error Handler Middleware + `AppError` class.
+    - [ ] **Async Wrapper**: `catchAsync` to avoid try-catch blocks in controllers.
+
+## 🛠 Phase 2: Core Backend (The "Headless" Engine)
+**Goal**: Build the API that serves user data.
+
+- [ ] **Authentication**:
+    - [ ] User Schema (Email, Password hash, Name, Username).
+    - [ ] Auth Routes (Signup, Login, Refresh Token).
+    - [ ] Middleware (JWT Verification).
+- [ ] **Profile Module**:
+    - [ ] Schema: Bio, Avatar, Resume Link (PDF/Docx), Social Links.
+    - [ ] Endpoints: `GET /profile`, `PUT /profile`.
+    - [ ] File Upload: Handle Resume upload (Storage: **Cloudinary**).
+- [ ] **Projects Module**:
+    - [ ] Schema: Title, Description, Tech Stack, Live Link, Repo Link, Images.
+    - [ ] Endpoints: CRUD (`GET`, `POST`, `PUT`, `DELETE` /projects).
+    - [ ] File Upload: Project Images (Storage: **Cloudinary**).
+- [ ] **Skills & Experience Module**:
+    - [ ] Schema: Skill name, Proficiency; Company, Role, Date Range.
+    - [ ] Endpoints: CRUD.
+- [ ] **Public API Endpoint**:
+    - [ ] `GET /api/v1/:username` -> Returns aggregated public data (Profile + Projects + Skills).
+    - [ ] Rate Limiting (Prevent abuse).
+
+## 🎨 Phase 3: Frontend Dashboard
+**Goal**: A beautiful interface for users to manage their data.
+
+- [ ] **Auth Pages**: Login/Register with form validation.
+- [ ] **Dashboard Layout**: Sidebar navigation, responsive design.
+- [ ] **Profile Editor**: Real-time preview of data entry.
+- [ ] **Project Manager**:
+    - [ ] Image Upload (integrating Cloudinary or S3/R2).
+    - [ ] List view of projects with Edit/Delete actions.
+- [ ] **Developer Settings**:
+    - [ ] View API Key (if required) or public endpoint URL.
+    - [ ] "How to use" documentation snippet.
+
+## 🌍 Phase 4: The Core Value (Usage)
+**Goal**: Demonstrate how the data is used.
+
+- [ ] **Default Portfolio Template**: A simple, elegant portfolio site that fetches data from the user's TalentLayer API.
+- [ ] **Documentation Site**: Clear guides on how others can fetch this data to build *their own* sites.
+
+## 🔮 Phase 5: Future Enhancements
+- [ ] **Analytics**: Track how many times a user's portfolio API is hit.
+- [ ] **Custom Domains**: Allow users to map a domain to their public profile.
+- [ ] **AI Generator**: Generate bio/descriptions based on keywords.
