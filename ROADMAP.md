@@ -2,7 +2,7 @@
 
 This document outlines the development roadmap for **TalentLayer**, a headless portfolio platform allowing users to store and serve their portfolio data via API.
 
-## 🚀 Phase 1: Foundation & Setup (Current)
+## 🚀 Phase 1: Foundation & Setup (Completed)
 **Goal**: Establish the technical infrastructure for Backend and Frontend.
 
 - [x] **Repo Setup**: Initialize Git, Monorepo structure (Backend/Frontend).
@@ -22,14 +22,14 @@ This document outlines the development roadmap for **TalentLayer**, a headless p
 ## 🛠 Phase 2: Core Backend (The "Headless" Engine)
 **Goal**: Build the API that serves user data.
 
-- [ ] **Authentication**:
-    - [ ] User Schema (Email, Password hash, Name, Username).
-    - [ ] Auth Routes (Signup, Login, Refresh Token).
-    - [ ] Middleware (JWT Verification).
-- [ ] **Profile Module**:
-    - [ ] Schema: Bio, Avatar, Resume Link (PDF/Docx), Social Links.
-    - [ ] Endpoints: `GET /profile`, `PUT /profile`.
-    - [ ] File Upload: Handle Resume upload (Storage: **Cloudinary**).
+- [x] **Authentication**:
+    - [x] User Schema (Email, Password hash, Name, Username).
+    - [x] Auth Routes (Signup, Login, Google OAuth).
+    - [x] Middleware (JWT Verification).
+- [x] **Profile Module**:
+    - [x] Schema: Bio, Avatar, Resume Link, Social Links (Dynamic).
+    - [x] Endpoints: `GET /profile/me`, `PATCH /profile/me`.
+    - [x] Public Lookup: `GET /profile/:userId` and `GET /profile/u/:username`.
 - [ ] **Projects Module**:
     - [ ] Schema: Title, Description, Tech Stack, Live Link, Repo Link, Images.
     - [ ] Endpoints: CRUD (`GET`, `POST`, `PUT`, `DELETE` /projects).
