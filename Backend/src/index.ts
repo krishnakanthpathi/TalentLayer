@@ -26,6 +26,11 @@ app.get('/', (req, res) => {
 
 });
 
+app.get('/api/v1', (req, res) => {
+  // welcome route
+  res.send(JSON.stringify({ message: 'Welcome to the API v1' }));
+});
+
 // Handle unhandled routes
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

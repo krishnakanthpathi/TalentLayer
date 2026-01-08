@@ -31,10 +31,57 @@ export const getProfileByUsername = catchAsync(async (req: Request, res: Respons
 // Public: Get Profile by User ID
 export const getUserProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
+
+    // Check if user exists
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new AppError('User not found', 404));
+    }
+
     const profile = await Profile.findOne({ user: userId } as any).populate('user', 'name email avatar username');
 
     if (!profile) {
-        return next(new AppError('Profile not found', 404));
+        // Return a minimal profile with user info
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                profile: {
+                    user,
+                    bio: '',
+                    title: '',
+                    locations: '',
+                    socialLinks: [],
+                    resume: '',
+                },
+            },
+        });
+    }
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            profile,
+        },
+    });
+});
+
+// Protected: Get My Profile
+export const getMyProfile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    // @ts-ignore
+    const userId = req.user.id;
+    const profile = await Profile.findOne({ user: userId } as any).populate('user', 'name email avatar username');
+
+    if (!profile) {
+        // Return null or minimal profile so frontend doesn't get 404
+        return res.status(200).json({
+            status: 'success',
+            data: {
+                // If we want to be helpful, we could fetch user and return it,
+                // but for /me, the frontend acts on 'profile: null' by using its own user context.
+                // However, returning a structure is safer to avoid client mutations on null.
+                profile: null,
+            },
+        });
     }
 
     res.status(200).json({

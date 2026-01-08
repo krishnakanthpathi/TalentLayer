@@ -1,15 +1,17 @@
 import express from 'express';
-import { getUserProfile, updateProfile, getProfileByUsername } from '../controllers/profileController.js';
+import { getUserProfile, updateProfile, getProfileByUsername, getMyProfile } from '../controllers/profileController.js';
 import { protect } from '../controllers/authController.js';
 
 const router = express.Router();
 
-// Public
-router.get('/u/:username', getProfileByUsername);
-router.get('/:userId', getUserProfile);
+// Protected Routes (Must be before generic public routes to capture /me)
+router.get('/me', protect, getMyProfile);
+router.patch('/me', protect, updateProfile);
 
-// Protected
-router.use(protect);
-router.patch('/me', updateProfile);
+// Public Routes
+router.get('/u/:username', getProfileByUsername);
+
+// only for developer use
+router.get('/id/:userId', getUserProfile);
 
 export default router;

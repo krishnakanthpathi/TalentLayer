@@ -297,10 +297,19 @@ const Profile: React.FC = () => {
                                 <button
                                     onClick={handleSave}
                                     disabled={loading}
-                                    className="flex-1 bg-white hover:bg-gray-200 text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
+                                    className={`flex-1 bg-white hover:bg-gray-200 text-black font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                 >
-                                    <Save size={18} />
-                                    Save
+                                    {loading ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+                                            Saving...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Save size={18} />
+                                            Save
+                                        </>
+                                    )}
                                 </button>
                                 <button
                                     onClick={() => setIsEditing(false)}
