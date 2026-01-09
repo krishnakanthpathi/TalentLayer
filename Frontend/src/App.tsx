@@ -26,7 +26,7 @@ const Home = () => {
                 <img
                   src={user?.avatar || DEFAULT_AVATAR_URL}
                   alt={user?.name}
-                  className="w-full h-full object-cover grayscale opacity-90"
+                  className="w-full h-full object-cover opacity-90"
                 />
               </div>
             </div>
