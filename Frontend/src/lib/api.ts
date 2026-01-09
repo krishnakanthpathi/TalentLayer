@@ -18,13 +18,18 @@ export const api = {
 
     post: async (endpoint: string, data: any) => {
         const token = localStorage.getItem('talentlayer_token');
+        const headers: any = {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        if (!(data instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        }
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(data),
+            headers,
+            body: data instanceof FormData ? data : JSON.stringify(data),
         });
 
         const responseData = await response.json();
@@ -36,13 +41,18 @@ export const api = {
 
     patch: async (endpoint: string, data: any) => {
         const token = localStorage.getItem('talentlayer_token');
+        const headers: any = {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        if (!(data instanceof FormData)) {
+            headers['Content-Type'] = 'application/json';
+        }
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            body: JSON.stringify(data),
+            headers,
+            body: data instanceof FormData ? data : JSON.stringify(data),
         });
 
         const responseData = await response.json();

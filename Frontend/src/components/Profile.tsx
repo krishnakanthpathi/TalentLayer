@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import type { Profile as ProfileType } from '../types';
-import { Edit2, MapPin, Save, X, Globe, FileText } from 'lucide-react';
+import { Edit2, MapPin, Save, X, Globe, FileText, Upload } from 'lucide-react';
 import { DEFAULT_AVATAR_URL } from '../constants';
 
 const Profile: React.FC = () => {
@@ -11,6 +11,8 @@ const Profile: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
+
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -61,39 +63,34 @@ const Profile: React.FC = () => {
     const handleSave = async () => {
         try {
             setLoading(true);
-            const responseData = await api.patch('/profile/me', formData);
+
+            const payload = new FormData();
+            payload.append('bio', formData.bio);
+            payload.append('title', formData.title);
+            payload.append('locations', formData.locations);
+            payload.append('resume', formData.resume);
+            // payload.append('socialLinks', JSON.stringify(formData.socialLinks));
+            // Backend expects socialLinks as array of objects in JSON body, 
+            // but for FormData, complex objects need stringification or multiple fields.
+            // My backend controller update handles `if (typeof socialLinks === 'string') JSON.parse`.
+            payload.append('socialLinks', JSON.stringify(formData.socialLinks));
+
+            if (avatarFile) {
+                payload.append('avatar', avatarFile);
+            } else {
+                if (formData.avatar) payload.append('avatar', formData.avatar);
+            }
+
+            const responseData = await api.patch('/profile/me', payload);
 
             const updatedProfile = responseData.data.profile;
             setProfile(updatedProfile);
 
             // Sync user avatar if it was updated
-            if (formData.avatar) {
-                // We re-fetch or manually update the user context
-                // Since the profile response populates user, we can try to use that, 
-                // but simpler to just mix the new avatar into the existing user object for immediate UI feedback.
-                // Ideally, we should use the user object returned from the backend, but let's see what we have.
-                // responseData.data.profile.user contains the updated user doc.
-                if (updatedProfile.user && updatedProfile.user.avatar) {
-                    // Accessing context to update user
-                    // We need to trigger a stored user update. 
-                    // AuthContext doesn't expose a 'updateUser' method, but 'setUser' is internal.
-                    // We can reload the window or better yet, just let the user know.
-                    // Actually, to update the Navbar, we MUST update the context.
-                    // Let's modify the local storage and force a reload? No, that's bad UX.
-                    // I will just rely on the fact that I can't easily update context without a dedicated method 
-                    // unless I expose setUser from context (which I didn't). 
-                    // Wait, I can just reload the page for now or...
-                    // Better: I will reload the page to ensure fresh state, OR I assume the user won't notice until next login?
-                    // No, "able change the avatar" implies immediate feedback.
-                    // I will add a window.location.reload() for now as a crude but effective way to sync context, 
-                    // OR I can use the existing 'user' object and 'setUser' if I had it. 
-                    // I'll accept that the Navbar might not update until refresh unless I implement a context update.
-                    // Let's just do a window.reload() after a short toast for now, or just let it be.
-                    // Update: I will check if I can modify AuthContext to expose setUser or similar?
-                    // Actually, I can just update localStorage and trigger a window reload.
-                    localStorage.setItem('talentlayer_user', JSON.stringify(updatedProfile.user));
-                    window.location.reload();
-                }
+            if (updatedProfile.user && updatedProfile.user.avatar) {
+                // Update localStorage and reload to sync context
+                localStorage.setItem('talentlayer_user', JSON.stringify(updatedProfile.user));
+                window.location.reload();
             }
 
             setIsEditing(false);
@@ -183,13 +180,28 @@ const Profile: React.FC = () => {
                             </>
                         ) : (
                             <div className="space-y-4 w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Avatar URL"
-                                    value={formData.avatar}
-                                    onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                                    className="w-full bg-black border border-white/20 rounded p-2 text-white focus:border-white focus:outline-none transition-colors"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) {
+                                                const file = e.target.files[0];
+                                                setAvatarFile(file);
+                                                setFormData({ ...formData, avatar: URL.createObjectURL(file) });
+                                            }
+                                        }}
+                                        className="hidden"
+                                        id="avatar-upload"
+                                    />
+                                    <label
+                                        htmlFor="avatar-upload"
+                                        className="flex items-center justify-center gap-2 w-full bg-white/10 border border-white/20 rounded p-2 text-white hover:bg-white/20 cursor-pointer transition-colors"
+                                    >
+                                        <Upload size={18} />
+                                        <span>Upload New Avatar</span>
+                                    </label>
+                                </div>
                                 <input
                                     type="text"
                                     placeholder="Professional Title"
